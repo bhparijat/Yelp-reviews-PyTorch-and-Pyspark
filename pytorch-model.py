@@ -161,10 +161,8 @@ with open("model/map_word.pkl",'wb') as file:
     pkl.dump(sla.map_word,file)
     
 with open("model/map_index.pkl",'wb') as file:
-    pkl.dump(sla.map_index,file)
-    
-with open("model/map_index.pkl",'wb') as file:
-    pkl.dump(sla.map_index,file)
+        pkl.dump(sla.map_index,file)
+
     
     
     
