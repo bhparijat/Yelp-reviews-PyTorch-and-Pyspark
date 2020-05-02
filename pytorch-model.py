@@ -14,13 +14,16 @@ import pickle as pkl
 warnings.filterwarnings("ignore")
 import string
 import sys
+import nltk
+#nltk.download('stopwords')
 from nltk.corpus import stopwords
 #plt.ion()
 
-reviews = pd.read_csv("model/master_reviews.csv")
+reviews = pd.read_csv("model/master_reviews_filtered.csv")
 
+print("shape of reviews used for generating pairs is\n", reviews.shape)
 
-print("shape of master reviews",reviews.shape)
+#print("shape of master reviews",reviews.shape)
 
 reviews_mod = reviews.dropna()
 
@@ -151,8 +154,11 @@ reviews_mod['tokenized'] = reviews_mod.text.apply(lambda x: tokenize_vocab(sla.m
 _ = reviews_mod.iloc[:,].tokenized.apply(lambda x:build_context_center(x,sla.pairs_map))
 
 
+print("number of pairs_map generated", len(sla.pairs_map[2]))
 
-import pickle as pkl
+
+t =time.time()
+
 with open("model/map.pkl",'wb') as file:
     pkl.dump(sla.pairs_map,file)
     
@@ -163,9 +169,9 @@ with open("model/map_word.pkl",'wb') as file:
 with open("model/map_index.pkl",'wb') as file:
         pkl.dump(sla.map_index,file)
 
-    
+print("time taken to save all the pairs information is ", time.time()-t)
     
     
 self_embedding = TrainSelfEmbedding()
     
-loss = self_embedding.train(sla.pairs_map,epochs= 50, sample_size= 100000)
+loss = self_embedding.train(sla.pairs_map,epochs= 50, sample_size= 1000000)
