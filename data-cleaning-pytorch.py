@@ -12,6 +12,8 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 import string
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 def clean_data(reviews):
@@ -51,7 +53,9 @@ def clean_data(reviews):
     
     return reviews
 
-reviews = pd.read_csv("model/reviews_filtered.csv",lines=True)
+a = time.time()
+reviews = pd.read_csv("model/reviews_filtered.csv")
+print("time taken to read 1 million rows", time.time()-a)
 reviews_cleaned = reviews.copy()
 reviews_cleaned = clean_data(reviews_cleaned)
 filter_null_row_cond = reviews_cleaned.text == "null"
@@ -62,5 +66,5 @@ reviews['text_length'] = reviews.text.apply(lambda x:len(x))
 print("columns\n",reviews_cleaned.columns)
 reviews_cleaned['label']= reviews.stars.apply(lambda x: 1 if x>=3 else 0)
 
-print("shape\n", reviews.shape)
+print("shape\n", reviews_cleaned.shape)
 reviews_cleaned.to_csv("model/master_reviews_filtered.csv",index=False)

@@ -57,13 +57,14 @@ class TrainSelfEmbedding:
         
         self.epochs = epochs
         
+        sampled_pairs = random.sample(pairs_map[self.window_size],sample_size);
         loss_per_epoch = []
         for ep in range(self.epochs):
             
             total_loss = 0
             
             
-            sampled_pairs = random.sample(pairs_map[self.window_size],sample_size)
+            #sampled_pairs = random.sample(pairs_map[self.window_size],sample_size)
             t = time.time()
             for i in range(sample_size):
 
@@ -106,12 +107,12 @@ a = time.time()
 
 print("calling train function")
 
-loss,w1,w2 = self_embedding.train(pairs_map,epochs= 50, sample_size= 100000)
+loss,w1,w2 = self_embedding.train(pairs_map,epochs= 100, sample_size= 100000)
 print("Training done in time ",time.time()-a)
 
 with open("model/w1.pkl","wb") as file:
 
     pkl.dump(w1,file)
 
-with open("model/w2.pkl" "wb") as file:
+with open("model/w2.pkl","wb") as file:
     pkl.dump(w2,file)
