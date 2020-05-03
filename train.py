@@ -5,10 +5,10 @@ import torch.optim as optim
 import torchvision
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import random
 import time
-from tqdm import tqdm_notebook as tq
+#from tqdm import tqdm_notebook as tq
 import warnings
 import pickle as pkl
 warnings.filterwarnings("ignore")
@@ -20,13 +20,16 @@ from nltk.corpus import stopwords
 #plt.ion()      
 
 
-
+t = time.time()
+print("loading pairs map******************")
 with open("model/map.pkl","rb") as file:
-    map_pairs = pkl.load(file)
+    pairs_map = pkl.load(file)
 
+print("loading map word******************")
 with open("model/map_word.pkl", "rb") as file:
     map_word = pkl.load(file)
 
+print("time taken to load pickle files ", time.time()-t)
 
 class TrainSelfEmbedding:
     
@@ -38,7 +41,8 @@ class TrainSelfEmbedding:
         
     def train(self,pairs_map,epochs = 100,sample_size=10**6):
         
-        self.vocab_size = len(map_word.keys())
+        print("initializing vocab size")
+        self.vocab_size = len(map_word.keys())+1
         
         print("vocab size",self.vocab_size)
         
@@ -54,7 +58,7 @@ class TrainSelfEmbedding:
         self.epochs = epochs
         
         loss_per_epoch = []
-        for i in range(self.epochs):
+        for ep in range(self.epochs):
             
             total_loss = 0
             
@@ -91,15 +95,18 @@ class TrainSelfEmbedding:
                 
             loss_per_epoch.append(total_loss/sample_size)
             
-            print("Total loss {} for epoch {} in time {}".format(total_loss,i+1,time.time()-t ))
+            print("Total loss {} for epoch {} in time {}".format(total_loss,ep+1,time.time()-t ))
             
             
-        return loss_per_epoch,weights1,weights2
+        return loss_per_epoch,weight1,weight2
 
 self_embedding = TrainSelfEmbedding()
 
 a = time.time()
-loss,w1,w2 = self_embedding.train(sla.pairs_map,epochs= 50, sample_size= 1000000)
+
+print("calling train function")
+
+loss,w1,w2 = self_embedding.train(pairs_map,epochs= 50, sample_size= 100000)
 print("Training done in time ",time.time()-a)
 
 with open("model/w1.pkl","wb") as file:
