@@ -39,7 +39,7 @@ class TrainSelfEmbedding:
         self.embeddings = 100
         self.epoch_loss = 0
         
-    def train(self,pairs_map,epochs = 100,sample_size=10**6):
+    def train(self,pairs_map,epochs = 100,sample_size=10**6,lr=0.001):
         
         print("initializing vocab size")
         self.vocab_size = len(map_word.keys())+1
@@ -47,8 +47,8 @@ class TrainSelfEmbedding:
         print("vocab size",self.vocab_size)
         
         
-        weight1 = torch.randn(self.embeddings,self.vocab_size).float()
-        weight2 = torch.randn(self.vocab_size,self.embeddings).float()
+        weight1 = torch.randn(self.embeddings,self.vocab_size,requires_grad=True).float()
+        weight2 = torch.randn(self.vocab_size,self.embeddings,requires_grad=True).float()
         
         print(sys.getsizeof(weight1.storage()),weight1.element_size()*weight1.nelement()/10**6)
         print(sys.getsizeof(weight2.storage()),weight2.element_size()*weight2.nelement()/10**6)
@@ -92,8 +92,14 @@ class TrainSelfEmbedding:
                 loss = torch.nn.functional.nll_loss(log_output.view(1,-1),torch.tensor([target]))
 
                 total_loss += loss
+                loss.backward()
                 
+                weight1.data -= lr* weight1.grad.data
+                weight2.data -= lr * weight2.grad.data
+
+                weight1.grad.data.zero_()
                 
+                weight2.grad.data.zero_()
             loss_per_epoch.append(total_loss/sample_size)
             
             print("Total loss {} for epoch {} in time {}".format(total_loss,ep+1,time.time()-t ))
@@ -107,7 +113,7 @@ a = time.time()
 
 print("calling train function")
 
-loss,w1,w2 = self_embedding.train(pairs_map,epochs= 100, sample_size= 100000)
+loss,w1,w2 = self_embedding.train(pairs_map,epochs= 100, sample_size= 100000,lr=0.001)
 print("Training done in time ",time.time()-a)
 
 with open("model/w1.pkl","wb") as file:
