@@ -19,7 +19,7 @@ from nltk.corpus import stopwords
 from torch.autograd import Variable
 plt.ion()
 BATCH_SIZE = 32
-epochs = 10
+epochs = 20
 num_class = 2
 embed_dim = 100
 device = torch.device("gpu" if torch.cuda.is_available() else "cpu")
@@ -48,7 +48,7 @@ class YelpDataset(Dataset):
     
         self.raw_data['label'] = self.raw_data.stars.apply(lambda x : 1 if x>=3 else 0)
         
-        self.raw_data = self.raw_data[["label","text"]].iloc[:100000,]
+        self.raw_data = self.raw_data[["label","text"]]
         
         self.word2idx = {}
         
@@ -199,7 +199,7 @@ if __name__ == "__main__":
     
     
     start_time = time.time()
-    yelp_dataset = YelpDataset(json_file = "~/data/yelp/review.json")
+    yelp_dataset = YelpDataset(json_file = "data/review.json")
     
     print("Time Taken to for dataset preprocessing is {} minutes...".format((time.time()-start_time)/60))
     
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     
     test_len = len(yelp_dataset) - train_len -valid_len
     
-    train,valid,test = random_split(yelp_dataset,[train_len,valid_len,test_len])
+    train,valid, test = random_split(yelp_dataset,[train_len,valid_len,test_len])
     
     
     
@@ -249,9 +249,31 @@ if __name__ == "__main__":
         
         
         
-        name = "model_"+str(epch)+".pkl"
+        name = "model/model_"+str(epch)+".pkl"
         with open(name,"wb") as file:
             pkl.dump(model,file)
             
         print("{} saved..".format(name))
         print("Time Taken to complete epoch is {} minutes...".format(mins))
+
+    print("Training Loss..")
+    print(tl_)
+
+
+    print("Training accuracy..")
+    print(ta_)
+
+
+    print("validation loss...")
+    print(vl_)
+
+    print("valiation accuracy..")
+    print(va_)
+
+
+    print("Testing model on test data..")
+
+
+    test_loss,test_acc = test_func(test)
+    
+    print("test accuracy is {}".format(test_acc))
