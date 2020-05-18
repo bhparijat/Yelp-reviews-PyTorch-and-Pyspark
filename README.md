@@ -1,5 +1,6 @@
-## Yelp_dataset_exploration
-**The repository contains code for the following:**
-1. Exploratory Analysis on Yelp Dataset
-2. Sentiment Analysis on Yelp reviews using PySpark with TF-IDF and Logistic Regression
-3. Sentiment Analysis using Word Embeddings implemented in PyTorch
+## Sentiment Analysis of Yelp Reviews
+
+The Yelp dataset contains reviews of restaturants listed on the website. Each review is marked with a flag such as cool, funny, sad and given a rank on the scale of 5. I trained two models to predict whether each sentiment can be classified as positive or negative. The two models are
+
+1. PySpark with TF-IDF and Logistic Regression
+2. Word Embeddings neural network model implemented in PyTorch
